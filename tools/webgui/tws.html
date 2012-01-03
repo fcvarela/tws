@@ -1,0 +1,139 @@
+<html>
+<head>
+<title>
+</title>
+<script src="prototype.js"></script>
+<script>
+
+var ip = "";
+var port = 0;
+var socket_is_open=false;
+var ws;
+
+
+function handle(action)
+{
+
+	if(!socket_is_open)
+	{
+		setTimeout("handle('"+action+"')",5000);
+		return;
+	}	
+
+	if(action=="goto"){
+		action = "goto:"+$F("lat")+":"+$F("lon");
+	}
+
+	ws.send(action);
+	
+}
+
+function wsmessage(event)
+{
+  //var data = event.data;
+
+}
+
+function wsclose(event)
+{
+  alert("closed websocket");
+}
+
+Event.observe(window,"load",function(){
+	ws = new WebSocket("ws://127.0.0.1:8888/world");
+	ws.onopen = function(){window.socket_is_open = true;}
+	ws.onmessage = wsmessage;
+	ws.onclose = wsclose;
+
+	$$("a").each(
+		function(item){
+			item.observe("click",
+				function(evt)
+				{
+					evt.stop();
+					handle(item.id);
+				}
+			);
+		}
+	);
+
+});
+</script>
+</head>
+<div>
+	<embed type="application/x-vlc-plugin"
+         name="video1"
+         autoplay="yes" loop="yes" width="640" height="400"
+         target="http://213.13.77.175:8081/tws.mpg" id="video1"/>
+</div>
+<div>
+<table border="0">
+<tr>
+<td>
+</td>
+<td>
+<a id="up" href="#up">up</a>
+</td>
+<td>
+</td>
+<td>
+<a id="zoomin" href="#zoomin">zoom in</a>
+</td>
+</tr>
+<tr>
+<td>
+<a id="left" href="#left">left</a>
+</td>
+<td>
+<a id="stop" href="#stop">stop</a>
+</td>
+<td>
+<a id="right" href="#right">right</a>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+</td>
+<td>
+<a id="down" href="#down">down</a>
+</td>
+<td>
+</td>
+<td>
+<a id="zoomout" href="#zoomout">zoom out</a>
+</td>
+</tr>
+</table>
+</div>
+<div>
+<a href="#spacestation" id="spacestation">seguir space station</a>
+</div>
+<div>
+<fieldset>
+<legend>
+Coordenadas
+</legend>
+<label>
+<input type="text" name="lat" id="lat"/> Latitude
+</label>
+<label>
+<input type="text" name="lon" id="lon"/> Longitude
+</label>
+<a href="#goto" id="goto">Ir para</a>
+</fieldset>
+</div>
+<div>
+<fieldset>
+<legend>
+Rotation
+</legend>
+<span><a href="#rotateleft" id="rotateleft">Rodar Esquerda</a> <a href="#rotateright" id="rotateright">Rodar Direita</a></span>
+<span><a href="#rotateup" id="rotateup">Rodar Cima</a> <a href="#rotatedown" id="rotatedown">Rodar Baixo</a></span>
+<span><a href="#rotatefront" id="rotatefront">Rodar Frente</a> <a href="#rotateback" id="rotateback">Rodar Tr&aacute;s</a></span>
+</fieldset>
+</div>
+</body>
+
+</html>
